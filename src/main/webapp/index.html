@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello</title>
+    <script>
+        function doIt(isSendString) {
+            const name = document.getElementById('name').value;
+
+            const opts = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(isSendString ? name : {name: name})
+            }
+
+            fetch('ws/hello/' + (isSendString ? 'str' : 'obj'), opts).then(response => {
+                if (response.ok) {
+                    response.json().then(rs => {
+                        const msg = isSendString ? rs : rs.message;
+                        alert('Got: ' + msg);
+                    }).catch(e => {
+                        console.log(response, e);
+                        alert('Error parsing data');
+                    });
+                } else {
+                    console.log(response);
+                    alert('Error fetching data');
+                }
+            });
+
+            return false;
+        }
+    </script>
+</head>
+<body>
+<form action="#" onsubmit="return false">
+    <input name="name" id="name" type="text">
+    <input type="button" value="as string" onclick="doIt(true)">
+    <input type="button" value="as object" onclick="doIt(false)">
+</form>
+</body>
+</html>
